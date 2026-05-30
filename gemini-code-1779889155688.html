@@ -6,35 +6,225 @@
   <title>樂命咖啡｜包場預約日曆</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif; background: #f7f3ec; color: #3b2f2f; }
-    header { padding: 28px 20px 16px; text-align: center; }
-    header h1 { margin: 0; font-size: 28px; letter-spacing: 1px; }
-    main { width: min(1060px, 100%); margin: 0 auto; padding: 16px; display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 20px; }
-    .card { background: #fffaf2; border: 1px solid #eadfce; border-radius: 24px; box-shadow: 0 12px 30px rgba(80, 60, 40, 0.08); padding: 20px; }
-    .calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
-    button { border: none; background: #8b5e3c; color: white; border-radius: 999px; padding: 10px 16px; cursor: pointer; font-size: 14px; transition: 0.2s; }
-    button:hover:not(:disabled) { background: #724a2f; }
-    .month-title { font-weight: 700; font-size: 20px; text-align: center; flex: 1; }
-    .weekdays, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-    .weekdays div { text-align: center; font-size: 13px; color: #8b7a6f; padding: 8px 0; }
-    .day { min-height: 76px; border-radius: 16px; background: #fff; border: 1px solid #eee1d2; padding: 8px; cursor: pointer; text-align: left; }
-    .day:hover:not(.disabled) { outline: 2px solid #c79b73; }
-    .day.disabled { opacity: 0.35; cursor: not-allowed; background: #f2ede6; }
-    .day-number { font-weight: 700; font-size: 14px; }
-    .status { margin-top: 8px; display: inline-block; font-size: 12px; padding: 3px 8px; border-radius: 999px; background: #e4f4df; color: #3d7b35; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f7f3ec;
+      color: #3b2f2f;
+    }
+
+    header {
+      padding: 28px 20px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #7a6a5f;
+      font-size: 14px;
+    }
+
+    main {
+      width: min(1060px, 100%);
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: #fffaf2;
+      border: 1px solid #eadfce;
+      border-radius: 24px;
+      box-shadow: 0 12px 30px rgba(80, 60, 40, 0.08);
+      padding: 20px;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+
+    button {
+      border: none;
+      background: #8b5e3c;
+      color: white;
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover { background: #724a2f; }
+
+    .secondary-button {
+      background: #d8c4ac;
+      color: #4f3d31;
+    }
+
+    .secondary-button:hover { background: #c6ad90; }
+
+    .danger-button {
+      background: #b85c50;
+      margin-top: 12px;
+      width: 100%;
+    }
+
+    .month-title {
+      font-weight: 700;
+      font-size: 20px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .weekdays,
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .weekdays div {
+      text-align: center;
+      font-size: 13px;
+      color: #8b7a6f;
+      padding: 8px 0;
+    }
+
+    .day {
+      min-height: 76px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid #eee1d2;
+      padding: 8px;
+      cursor: pointer;
+      text-align: left;
+      color: #3b2f2f;
+    }
+
+    .day:hover { outline: 2px solid #c79b73; }
+
+    .day.disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      background: #f2ede6;
+    }
+
+    .day-number {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .status {
+      margin-top: 8px;
+      display: inline-block;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .available { background: #e4f4df; color: #3d7b35; }
+    .partial { background: #fff1c9; color: #8a6500; }
+    .full { background: #ffe0dc; color: #a34235; }
+
     .selected { outline: 3px solid #8b5e3c; }
-    .side-title { margin: 0 0 12px; font-size: 22px; }
-    .selected-date { padding: 12px; background: #fff; border-radius: 16px; margin-bottom: 16px; color: #6f5c4d; line-height: 1.5; font-weight: bold; }
-    label { display: block; margin: 14px 0 6px; font-size: 14px; font-weight: 700; }
-    input, select, textarea { width: 100%; padding: 12px; border-radius: 14px; border: 1px solid #ddcdbd; background: white; font-size: 15px; margin-bottom: 8px; }
-    textarea { resize: vertical; min-height: 80px; }
-    .notice { font-size: 13px; color: #8b7a6f; line-height: 1.6; margin-top: 12px; }
-    @media (max-width: 860px) { main { grid-template-columns: 1fr; } .day { min-height: 58px; padding: 6px; } }
+
+    .side-title {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    .selected-date {
+      padding: 12px;
+      background: #fff;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      color: #6f5c4d;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid #ddcdbd;
+      background: white;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .notice {
+      font-size: 13px;
+      color: #8b7a6f;
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    .message {
+      margin-top: 14px;
+      font-weight: 700;
+      color: #6b4a35;
+      line-height: 1.5;
+    }
+
+    .booking-list {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid #eadfce;
+    }
+
+    .booking-item {
+      background: #fff;
+      border: 1px solid #eee1d2;
+      border-radius: 14px;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .booking-item strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 860px) {
+      main { grid-template-columns: 1fr; }
+      .day { min-height: 58px; padding: 6px; }
+      .status { font-size: 10px; padding: 2px 5px; }
+      .calendar-header button { padding: 8px 12px; }
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>樂命咖啡｜包場預約</h1>
+    <p>單機測試版：資料只會暫存在目前這台電腦的瀏覽器。</p>
   </header>
 
   <main>
@@ -44,7 +234,10 @@
         <div class="month-title" id="monthTitle"></div>
         <button type="button" id="nextMonth">下一月</button>
       </div>
-      <div class="weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
+
+      <div class="weekdays">
+        <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+      </div>
       <div class="days" id="days"></div>
     </section>
 
@@ -52,53 +245,117 @@
       <h2 class="side-title">預約資料</h2>
       <div class="selected-date" id="selectedDateText">請先選擇日期</div>
 
-      <form action="請填入你的_Formspree_網址" method="POST">
-        
-        <input type="hidden" id="hiddenDate" name="預約日期" value="" required>
-
-        <label>包場時段</label>
-        <select name="預約時段" required>
-          <option value="">請選擇時段</option>
-          <option value="上午包場｜10:00 - 13:00">上午包場｜10:00 - 13:00</option>
-          <option value="下午包場｜14:00 - 17:00">下午包場｜14:00 - 17:00</option>
-          <option value="晚上包場｜18:00 - 21:00">晚上包場｜18:00 - 21:00</option>
+      <form id="bookingForm">
+        <label for="timeSlot">包場時段</label>
+        <select id="timeSlot" required disabled>
+          <option value="">請先選日期</option>
         </select>
 
-        <label>姓名</label>
-        <input name="姓名" type="text" placeholder="請輸入姓名" required />
-        
-        <label>電話</label>
-        <input name="電話" type="tel" placeholder="例如：0912345678" required />
-        
-        <label>LINE ID</label>
-        <input name="LINE_ID" type="text" placeholder="請輸入 LINE ID" required />
-        
-        <label>備註</label>
-        <textarea name="備註" placeholder="例如：人數、活動類型、是否需要餐點"></textarea>
+        <label for="name">姓名</label>
+        <input id="name" type="text" placeholder="請輸入姓名" required />
 
-        <p class="notice">送出後，我們會盡快透過電話或 LINE 與您聯繫確認。</p>
-        <button type="submit" style="width: 100%;">送出預約表單</button>
+        <label for="phone">電話</label>
+        <input id="phone" type="tel" placeholder="請輸入電話" required />
+
+        <label for="lineId">LINE ID</label>
+        <input id="lineId" type="text" placeholder="請輸入 LINE ID" required />
+
+        <label for="note">備註</label>
+        <textarea id="note" placeholder="例如：人數、活動類型、是否需要餐點"></textarea>
+
+        <p class="notice">送出後會先存在瀏覽器中，方便測試流程。正式版再改成寫入 Google 日曆。</p>
+
+        <button type="submit">送出測試預約</button>
+        <button type="button" class="danger-button" id="clearBookings">清除本機測試資料</button>
+        <div class="message" id="message"></div>
       </form>
+
+      <div class="booking-list">
+        <h3>目前選擇日期的預約</h3>
+        <div id="bookingList">尚未選擇日期</div>
+      </div>
     </section>
   </main>
 
   <script>
+    const STORAGE_KEY = "leming_cafe_booking_test";
+
+    const timeSlots = [
+      { label: "上午包場｜10:00 - 13:00", start: "10:00", end: "13:00" },
+      { label: "下午包場｜14:00 - 17:00", start: "14:00", end: "17:00" },
+      { label: "晚上包場｜18:00 - 21:00", start: "18:00", end: "21:00" }
+    ];
+
     let currentDate = new Date();
     let selectedDate = null;
+    let bookings = loadBookings();
 
     const monthTitle = document.getElementById("monthTitle");
     const daysEl = document.getElementById("days");
     const selectedDateText = document.getElementById("selectedDateText");
-    const hiddenDateInput = document.getElementById("hiddenDate");
+    const timeSlotEl = document.getElementById("timeSlot");
+    const messageEl = document.getElementById("message");
+    const bookingListEl = document.getElementById("bookingList");
 
-    document.getElementById("prevMonth").addEventListener("click", () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
-    document.getElementById("nextMonth").addEventListener("click", () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
+    document.getElementById("prevMonth").addEventListener("click", () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    document.getElementById("nextMonth").addEventListener("click", () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    document.getElementById("clearBookings").addEventListener("click", () => {
+      const confirmed = confirm("確定要清除這台電腦上的所有測試預約資料嗎？");
+      if (!confirmed) return;
+
+      localStorage.removeItem(STORAGE_KEY);
+      bookings = [];
+      messageEl.textContent = "已清除本機測試資料。";
+      renderCalendar();
+      if (selectedDate) updateSelectedDatePanel(formatDate(selectedDate));
+    });
+
+    function loadBookings() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveBookings() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+    }
 
     function formatDate(date) {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
+    }
+
+    function isSameDate(a, b) {
+      return formatDate(a) === formatDate(b);
+    }
+
+    function getBookingsByDate(dateString) {
+      return bookings.filter(booking => booking.date === dateString);
+    }
+
+    function getDateStatus(dateString) {
+      const count = getBookingsByDate(dateString).length;
+      if (count >= timeSlots.length) return "full";
+      if (count > 0) return "partial";
+      return "available";
+    }
+
+    function getStatusText(status) {
+      if (status === "full") return "已滿";
+      if (status === "partial") return "部分可約";
+      return "可預約";
     }
 
     function renderCalendar() {
@@ -113,29 +370,142 @@
       daysEl.innerHTML = "";
 
       for (let i = 0; i < firstDay.getDay(); i++) {
-        daysEl.appendChild(document.createElement("div"));
+        const empty = document.createElement("div");
+        daysEl.appendChild(empty);
       }
 
       for (let day = 1; day <= lastDay.getDate(); day++) {
         const date = new Date(year, month, day);
         const dateString = formatDate(date);
+        const status = getDateStatus(dateString);
 
         const dayEl = document.createElement("button");
         dayEl.type = "button";
-        dayEl.className = `day ${date < today ? "disabled" : ""} ${selectedDate && formatDate(selectedDate) === dateString ? "selected" : ""}`;
-        dayEl.innerHTML = `<div class="day-number">${day}</div><span class="status">可預約</span>`;
+        dayEl.className = `day ${date < today ? "disabled" : ""} ${selectedDate && isSameDate(date, selectedDate) ? "selected" : ""}`;
+        dayEl.innerHTML = `
+          <div class="day-number">${day}</div>
+          <span class="status ${status}">${getStatusText(status)}</span>
+        `;
 
         if (date >= today) {
-          dayEl.addEventListener("click", () => {
-            selectedDate = date;
-            selectedDateText.textContent = `已選擇日期：${dateString}`;
-            hiddenDateInput.value = dateString; // 把日期塞進隱藏欄位準備送出
-            renderCalendar();
-          });
+          dayEl.addEventListener("click", () => selectDate(date));
         }
+
         daysEl.appendChild(dayEl);
       }
     }
+
+    function selectDate(date) {
+      selectedDate = date;
+      const dateString = formatDate(date);
+      updateSelectedDatePanel(dateString);
+      renderCalendar();
+    }
+
+    function updateSelectedDatePanel(dateString) {
+      selectedDateText.textContent = `已選擇：${dateString}`;
+      updateTimeSlots(dateString);
+      renderBookingList(dateString);
+    }
+
+    function updateTimeSlots(dateString) {
+      const dateBookings = getBookingsByDate(dateString);
+      const bookedSlotLabels = dateBookings.map(booking => booking.slotLabel);
+
+      timeSlotEl.innerHTML = "";
+      timeSlotEl.disabled = false;
+
+      const defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.textContent = "請選擇時段";
+      timeSlotEl.appendChild(defaultOption);
+
+      timeSlots.forEach(slot => {
+        const option = document.createElement("option");
+        option.value = JSON.stringify(slot);
+        option.textContent = bookedSlotLabels.includes(slot.label)
+          ? `${slot.label}｜已被預約`
+          : slot.label;
+        option.disabled = bookedSlotLabels.includes(slot.label);
+        timeSlotEl.appendChild(option);
+      });
+    }
+
+    function renderBookingList(dateString) {
+      const dateBookings = getBookingsByDate(dateString);
+
+      if (dateBookings.length === 0) {
+        bookingListEl.textContent = "這天目前沒有測試預約。";
+        return;
+      }
+
+      bookingListEl.innerHTML = dateBookings.map(booking => `
+        <div class="booking-item">
+          <strong>${booking.slotLabel}</strong>
+          姓名：${escapeHtml(booking.name)}<br />
+          電話：${escapeHtml(booking.phone)}<br />
+          LINE ID：${escapeHtml(booking.lineId)}<br />
+          備註：${escapeHtml(booking.note || "無")}
+        </div>
+      `).join("");
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    document.getElementById("bookingForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if (!selectedDate) {
+        messageEl.textContent = "請先選擇日期。";
+        return;
+      }
+
+      if (!timeSlotEl.value) {
+        messageEl.textContent = "請選擇包場時段。";
+        return;
+      }
+
+      const slot = JSON.parse(timeSlotEl.value);
+      const dateString = formatDate(selectedDate);
+      const alreadyBooked = bookings.some(booking => {
+        return booking.date === dateString && booking.slotLabel === slot.label;
+      });
+
+      if (alreadyBooked) {
+        messageEl.textContent = "這個時段已被預約，請選擇其他時段。";
+        updateSelectedDatePanel(dateString);
+        return;
+      }
+
+      const newBooking = {
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        date: dateString,
+        slotLabel: slot.label,
+        startTime: slot.start,
+        endTime: slot.end,
+        name: document.getElementById("name").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        lineId: document.getElementById("lineId").value.trim(),
+        note: document.getElementById("note").value.trim(),
+        createdAt: new Date().toISOString()
+      };
+
+      bookings.push(newBooking);
+      saveBookings();
+
+      messageEl.textContent = "測試預約已送出！右側清單與日曆狀態已更新。";
+      event.target.reset();
+      updateSelectedDatePanel(dateString);
+      renderCalendar();
+    });
+
     renderCalendar();
   </script>
 </body>
